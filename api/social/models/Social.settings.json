@@ -1,0 +1,28 @@
+{
+  "connection": "default",
+  "collectionName": "social",
+  "info": {
+    "name": "social",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "default": "",
+      "type": "string",
+      "required": true
+    },
+    "link": {
+      "default": "",
+      "type": "string",
+      "required": true
+    },
+    "icon": {
+      "default": "",
+      "type": "string",
+      "required": true
+    }
+  }
+}

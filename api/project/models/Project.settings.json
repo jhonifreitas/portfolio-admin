@@ -1,0 +1,58 @@
+{
+  "connection": "default",
+  "collectionName": "",
+  "info": {
+    "name": "project",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "default": "",
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "default": "",
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "mobile",
+        "website",
+        "system"
+      ]
+    },
+    "description_PT": {
+      "default": "",
+      "type": "text",
+      "required": true
+    },
+    "description_EN": {
+      "default": "",
+      "type": "text",
+      "required": true
+    },
+    "featured_image": {
+      "model": "file",
+      "via": "related",
+      "plugin": "upload",
+      "required": true
+    },
+    "images": {
+      "collection": "file",
+      "via": "related",
+      "plugin": "upload",
+      "required": false
+    },
+    "company": {
+      "model": "company",
+      "via": "projects"
+    },
+    "skills": {
+      "collection": "skill",
+      "via": "project"
+    }
+  }
+}

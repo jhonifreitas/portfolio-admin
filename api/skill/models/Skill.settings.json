@@ -1,0 +1,26 @@
+{
+  "connection": "default",
+  "collectionName": "skill",
+  "info": {
+    "name": "skill",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "default": "",
+      "type": "string"
+    },
+    "porcent": {
+      "default": 0,
+      "max": 100,
+      "type": "integer"
+    },
+    "project": {
+      "model": "project",
+      "via": "skills"
+    }
+  }
+}
