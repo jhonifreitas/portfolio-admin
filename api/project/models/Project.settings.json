@@ -1,6 +1,6 @@
 {
   "connection": "default",
-  "collectionName": "",
+  "collectionName": "project",
   "info": {
     "name": "project",
     "description": ""
@@ -53,6 +53,11 @@
     "skills": {
       "collection": "skill",
       "via": "project"
+    },
+    "Link": {
+      "default": "",
+      "type": "string",
+      "required": true
     }
   }
 }
