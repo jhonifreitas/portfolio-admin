@@ -54,7 +54,7 @@
       "collection": "skill",
       "via": "project"
     },
-    "Link": {
+    "link": {
       "default": "",
       "type": "string",
       "required": true
