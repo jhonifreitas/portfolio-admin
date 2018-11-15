@@ -21,7 +21,8 @@
       "enum": [
         "mobile",
         "website",
-        "system"
+        "system",
+        "e-commerce"
       ]
     },
     "description_PT": {
