@@ -19,8 +19,9 @@
       "type": "integer"
     },
     "project": {
-      "model": "project",
-      "via": "skills"
+      "collection": "project",
+      "via": "skills",
+      "dominant": true
     }
   }
 }
