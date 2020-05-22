@@ -5,16 +5,16 @@
       "connector": "strapi-hook-mongoose",
       "settings": {
         "client": "mongo",
-        "host": "127.0.0.1",
+        "host": "${process.env.DATABASE_HOST || '127.0.0.1'}",
         "srv": false,
-        "port": 27017,
-        "database": "my-portfolio",
-        "username": "",
-        "password": ""
+        "port": "${process.env.DATABASE_PORT || 27017}",
+        "database": "${process.env.DATABASE_NAME || 'strapi-development'}",
+        "username": "${process.env.DATABASE_USERNAME || ''}",
+        "password": "${process.env.DATABASE_PASSWORD || ''}"
       },
       "options": {
-        "authenticationDatabase": "admin",
-        "ssl": false
+        "ssl": "${process.env.DATABASE_SSL || false}",
+        "authenticationDatabase": "${process.env.DATABASE_AUTHENTICATION_DATABASE || 'admin'}"
       }
     }
   }
