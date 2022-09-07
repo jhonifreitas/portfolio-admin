@@ -1,1 +1,0 @@
-{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"heroku_17sxrskq.service"}],"uuid":"d09557a3d0144bee81d1a45fab20a69f"}

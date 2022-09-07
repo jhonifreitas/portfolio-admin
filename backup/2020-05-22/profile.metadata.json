@@ -1,1 +1,0 @@
-{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"heroku_17sxrskq.profile"},{"v":{"$numberInt":"2"},"unique":true,"key":{"active":{"$numberInt":"1"}},"name":"active_1","ns":"heroku_17sxrskq.profile","background":true}],"uuid":"abb47a6b0ebb446c94c249cdf2f7238d"}
