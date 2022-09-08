@@ -26,7 +26,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`sidebar relative h-screen flex flex-col bg-indigo-900 p-5 pt-7
+      className={`sidebar relative h-screen flex flex-col bg-indigo-900
       duration-300 ${ open ? 'md:w-72 w-50' : 'w-20' }`}
     >
       <div
@@ -37,11 +37,13 @@ export default function Sidebar() {
         <ChevronLeftIcon className="stroke-2" />
       </div>
 
-      <h1 className={`text-white font-medium duration-200 ${ open ? 'text-xl' : 'text-sm' }`}>
-        Painel Admin
-      </h1>
+      <div className="p-5 pt-7">
+        <h1 className={`text-white font-medium duration-200 ${ open ? 'text-xl' : 'text-sm' }`}>
+          Painel Admin
+        </h1>
+      </div>
 
-      <ul className="my-6 flex-1 overflow-x-auto space-y-1">
+      <ul className="my-6 flex-1 overflow-x-auto space-y-1 px-5">
         {items.map((item, index) => (
           <li key={index}>
             <Link
@@ -57,7 +59,7 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
-      <div className={`flex p-2 gap-x-2 items-center text-gray-300 ${!open && 'hidden'}`}>
+      <div className={`flex px-5 py-3 gap-x-2 items-center bg-indigo-800/90 text-gray-300 ${!open && 'hidden'}`}>
         <img src="/assets/images/avatar.png" className="rounded-full h-10 w-100" alt="" />
         <div className="flex-1">
           <p className="text-sm">Jonathan Freitas</p>

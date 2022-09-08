@@ -49,10 +49,10 @@ export default function SlideOver(props: Props) {
                     <div className="absolute top-0 left-0 -ml-8 flex pt-4 pr-2 sm:-ml-10 sm:pr-4">
                       <button
                         type="button"
-                        className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                        className="rounded-md text-gray-300 ring-2 ring-gray-300 duration-200 hover:ring-white hover:text-white focus:outline-none"
                         onClick={() => props.onClose()}
                       >
-                        <span className="sr-only">Close panel</span>
+                        <span className="sr-only">Fechar</span>
                         <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                       </button>
                     </div>

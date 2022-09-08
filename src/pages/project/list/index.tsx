@@ -12,7 +12,7 @@ export default function ProjectList() {
   const [formIsOpen, setFormIsOpen] = useState(false);
 
   const projects: Project[] = [
-    {id: 'asdk', name: 'Keko', description: ''}
+    {id: 'asdk', name: 'Keko', description: ''},
   ];
 
   function openProject(project?: Project) {
@@ -21,7 +21,7 @@ export default function ProjectList() {
   }
 
   return (
-    <div className={`page-project-list relative ${ projects.length ? 'pb-24' : ''}`}>
+    <div className={`page-project-list relative min-h-full ${ projects.length ? 'pb-24' : ''}`}>
       <h2 className="text-3xl font-medium">Projetos</h2>
 
       {/* TABLE */}

@@ -11,7 +11,7 @@ export default function Pagination(props: Props) {
   const pages = Array.from(Array(3).keys());
 
   return (
-    <div className="flex items-center justify-between bg-white py-3 sm:px-6">
+    <div className="flex items-center justify-between bg-white py-3 sm:px-7">
       <div className="flex flex-1 justify-between sm:hidden">
         <a
           href="#"
