@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FolderPlusIcon, PlusIcon } from '@heroicons/react/24/outline';
 
-import { Project } from '../../../interfaces/project';
+import { Project } from '../../../models/project';
 
 import ProjectForm from '../form';
 import Pagination from '../../../components/pagination';
@@ -11,9 +11,7 @@ export default function ProjectList() {
   const [project, setProject] = useState<Project>();
   const [formIsOpen, setFormIsOpen] = useState(false);
 
-  const projects: Project[] = [
-    {id: 'asdk', name: 'Keko', description: ''},
-  ];
+  const projects: Project[] = [];
 
   function openProject(project?: Project) {
     setProject(project);
@@ -22,10 +20,10 @@ export default function ProjectList() {
 
   return (
     <div className={`page-project-list relative min-h-full ${ projects.length ? 'pb-24' : ''}`}>
-      <h2 className="text-3xl font-medium">Projetos</h2>
+      <h2 className={`text-3xl font-medium ${ !projects.length ? 'mb-6' : '' }`}>Projetos</h2>
 
       {/* TABLE */}
-      { projects.length &&
+      { projects.length > 0 &&
         <>
           <p className="mb-6 text-gray-500">Listagem de todos os projetos já registrados.</p>
 

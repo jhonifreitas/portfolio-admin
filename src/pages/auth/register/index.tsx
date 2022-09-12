@@ -1,19 +1,33 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import * as Yup from 'yup';
+import { Form, Formik, FormikHelpers } from 'formik';
+
 import Input from '../../../components/input';
+
+interface FormValue {
+  email: string;
+  password: string;
+  remember: boolean;
+}
 
 export default function Register() {
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  const responseBody: {[key: string]: FormDataEntryValue} = {};
+  const validationSchema = Yup.object({
+    email : Yup.string().email().required('E-mail é obrigatório'),
+    password: Yup.string().required('Senha é obrigatório'),
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    formData.forEach((value, property) => responseBody[property] = value);
-    console.log(responseBody);
+    remeber: Yup.boolean()
+  });
+
+  const initialValues: FormValue = {email: '', password: '', remember: false};
+  
+  function onSubmit(values: FormValue, helpers: FormikHelpers<FormValue>) {
+    console.log(values);
+    helpers.setSubmitting(false);
     navigate(location.search || '/');
   }
 
@@ -37,19 +51,21 @@ export default function Register() {
               </Link>
             </p>
           </div>
-          <form className="mt-8 space-y-6 bg-white shadow p-10 rounded-lg" onSubmit={onSubmit}>
-            <Input type="email" name="email" label="E-mail" required />
-            <Input type="password" name="password" label="Senha" required />
+          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+            <Form className="mt-8 space-y-6 bg-white shadow p-10 rounded-lg">
+              <Input type="email" name="email" label="E-mail" />
+              <Input type="password" name="password" label="Senha" />
 
-            <Input type="checkbox" name="term" label="Termos e Condições de uso" />
+              <Input type="checkbox" name="term" label="Termos e Condições de uso" />
 
-            <button
-              type="submit"
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              Criar
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Criar
+              </button>
+            </Form>
+          </Formik>
         </div>
       </div>
     </div>
