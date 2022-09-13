@@ -3,7 +3,7 @@ import { BaseModel } from './base';
 export class Profile extends BaseModel {
   name!: string;
   photo?: string;
-  profession_init!: Date;
+  profession_init!: string;
 
   profession_PT!: string;
   profession_EN!: string;

@@ -12,11 +12,16 @@ import {
   ChatBubbleLeftEllipsisIcon,
 } from '@heroicons/react/24/outline';
 
+import { Profile } from '../../models/profile';
+
 import AuthService from '../../services/auth.service';
+import ProfileApi from '../../services/apis/profile.service';
 
 export default function Sidebar() {
+  
   const location = useLocation();
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<Profile>();
 
   const [open, setOpen] = useState(true);
   const items = [
@@ -27,6 +32,14 @@ export default function Sidebar() {
     { title: "Habilidades", icon: <ShieldCheckIcon className="h-6 w-6" />, url: "/habilidade" },
     { title: "Sociais", icon: <ChatBubbleLeftEllipsisIcon className="h-6 w-6" />, url: "/social" },
   ];
+
+  useState(async () => {
+    const profileId = process.env.REACT_APP_PROFILE_ID;
+    if (profileId) {
+      const profile = await ProfileApi.getById(profileId);
+      setProfile(profile);
+    }
+  });
 
   async function logout() {
     await AuthService.signOut();
@@ -68,18 +81,25 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
-      <div className={`flex px-5 py-3 items-center bg-indigo-800/90 text-gray-300 ${!open && 'hidden'}`}>
-        <Link to="/perfil" className="flex-1 flex items-center gap-x-2">
-          <img src="/assets/images/avatar.png" className="rounded-full h-10 w-100" alt="" />
-          <div className="flex-1">
-            <p className="text-sm">Jonathan Freitas</p>
-            <p className="text-xs text-white/50">Adminitrador</p>
+
+      {profile &&
+        <div className={`flex px-5 py-3 items-center bg-indigo-800/90 text-gray-300 ${!open && 'hidden'}`}>
+          <Link
+            to="/perfil"
+            className={`flex-1 flex items-center gap-x-2 rounded-md hover:bg-white/20
+            ${location.pathname === '/perfil' && 'bg-white/20'}`}
+          >
+            <img src={profile.photo || "/assets/images/avatar.png"} className="rounded-full h-10 w-100" alt="" />
+            <div className="flex-1">
+              <p className="text-sm">{profile.name}</p>
+              <p className="text-xs text-white/50">Adminitrador</p>
+            </div>
+          </Link>
+          <div className="cursor-pointer hover:bg-white/20 p-2 rounded-md duration-200" onClick={logout}>
+            <ArrowLeftOnRectangleIcon className="h-5 w-5" />
           </div>
-        </Link>
-        <div className="cursor-pointer hover:bg-white/20 p-2 rounded-md duration-200" onClick={logout}>
-          <ArrowLeftOnRectangleIcon className="h-5 w-5" />
         </div>
-      </div>
+      }
     </div>
   );
 }

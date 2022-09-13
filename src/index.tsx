@@ -14,6 +14,7 @@ import Layout from './components/layout';
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 
+import ProfileForm from "./pages/profile";
 import SkillList from "./pages/skill/list";
 import SocialList from "./pages/social/list";
 import ServiceList from "./pages/service/list";
@@ -28,6 +29,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
+          {/* HOME */}
           <Route index element={<Home />} />
 
           {/* PROJECT */}
@@ -44,6 +46,9 @@ root.render(
 
           {/* SOCIAL */}
           <Route path="social" element={<SocialList />} />
+
+          {/* PROFILE */}
+          <Route path="perfil" element={<ProfileForm />} />
         </Route>
 
         {/* AUTH */}

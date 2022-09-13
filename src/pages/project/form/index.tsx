@@ -95,13 +95,13 @@ export default function ProjectForm(props: Props) {
                 <Input
                   type="textarea"
                   name="description_PT"
-                  label="Descrição PT"
+                  label="Descrição (PT)"
                   placeholder="Informe a descrição em português"
                 />
                 <Input
                   type="textarea"
                   name="description_EN"
-                  label="Descrição EN"
+                  label="Descrição (EN)"
                   placeholder="Informe a descrição em inglês"
                 />
               </div>

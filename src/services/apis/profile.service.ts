@@ -5,11 +5,11 @@ import { Profile } from '../../models/profile';
 class ProfileService extends BaseApi {
 
   async getById(id: string): Promise<Profile> {
-    return this.get(`company/${id}`);
+    return this.get(`profile/${id}`);
   }
 
   async update(id: string, data: Partial<Profile>): Promise<Profile> {
-    return this.put(`company/${id}`, data);
+    return this.put(`profile/${id}`, data);
   }
 }
 
