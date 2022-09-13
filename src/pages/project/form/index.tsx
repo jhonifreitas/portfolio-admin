@@ -8,6 +8,7 @@ import { Project } from '../../../models/project';
 import { Company } from '../../../models/company';
 
 import SkillApi from '../../../services/apis/skill.service';
+import CompanyApi from '../../../services/apis/company.service';
 import ProjectApi from '../../../services/apis/project.service';
 
 import Input from '../../../components/input';
@@ -17,7 +18,7 @@ import SlideOver from '../../../components/slide-over';
 
 interface Props {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (project?: Project) => void;
 
   project?: Project;
 }
@@ -60,14 +61,14 @@ export default function ProjectForm(props: Props) {
   }
 
   async function getCompanies() {
-    const companies = await ProjectApi.getAll();
+    const companies = await CompanyApi.getAll();
     setCompanies(companies);
   }
 
   async function onSubmit(values: Project, helpers: FormikHelpers<Project>) {
-    await ProjectApi.save(values);
+    const project = await ProjectApi.save(values);
     helpers.setSubmitting(false);
-    props.onClose();
+    props.onClose(project);
   }
 
   return (
@@ -75,44 +76,57 @@ export default function ProjectForm(props: Props) {
       {loading && <Loading absolute />}
       {!loading &&
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-          <Form>
-            <div className="bg-indigo-600 text-white px-6 py-7">
-              <h2 className="text-xl">{props.project?.id ? 'Editar Projeto' : 'Novo Projeto'}</h2>
-              <p className="text-sm text-white/60">
-                {props.project?.id && 'Vamos modificar as informações abaixo para editar seu projeto.'}
-                {!props.project?.id && 'Comece preenchendo as informações abaixo para criar seu novo projeto.'}
-              </p>
-            </div>
+          {({ isSubmitting }) => (
+            <Form>
+              <div className="bg-indigo-600 text-white px-6 py-7">
+                <h2 className="text-xl">{props.project?.id ? 'Editar Projeto' : 'Novo Projeto'}</h2>
+                <p className="text-sm text-white/60">
+                  {props.project?.id && 'Vamos modificar as informações abaixo para editar seu projeto.'}
+                  {!props.project?.id && 'Comece preenchendo as informações abaixo para criar seu novo projeto.'}
+                </p>
+              </div>
 
-            <div className="p-6 flex-1 space-y-4">
-              <Input name="name" label="Nome" placeholder="Informe o nome" />
-              <Input name="link" label="Link" placeholder="Informe o link" />
-              <ComboBox name="companyId" label="Empresas" items={companies} />
-              <ComboBox name="skillIds" label="Habilidades" items={skills} multiple />
-              <ComboBox name="type" label="Tipo" items={types} />
-              <Input
-                type="textarea"
-                name="description_PT"
-                label="Descrição PT"
-                placeholder="Informe a descrição em português"
-              />
-              <Input
-                type="textarea"
-                name="description_EN"
-                label="Descrição EN"
-                placeholder="Informe a descrição em inglês"
-              />
-            </div>
+              <div className="p-6 flex-1 space-y-4">
+                <Input name="name" label="Nome" placeholder="Informe o nome" />
+                <Input name="link" label="Link" placeholder="Informe o link" />
+                <ComboBox name="companyId" label="Empresas" items={companies} />
+                <ComboBox name="skillIds" label="Habilidades" items={skills} multiple />
+                <ComboBox name="type" label="Tipo" items={types} />
+                <Input
+                  type="textarea"
+                  name="description_PT"
+                  label="Descrição PT"
+                  placeholder="Informe a descrição em português"
+                />
+                <Input
+                  type="textarea"
+                  name="description_EN"
+                  label="Descrição EN"
+                  placeholder="Informe a descrição em inglês"
+                />
+              </div>
 
-            <div className="border border-top p-4 space-x-2 text-right">
-              <button type="button" onClick={props.onClose} className="rounded-md border py-2 px-4 text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                Cancelar
-              </button>
-              <button type="submit" className="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                Salvar
-              </button>
-            </div>
-          </Form>
+              <div className="border border-top p-4 space-x-2 text-right">
+                <button type="button" onClick={() => props.onClose()} className="rounded-md border py-2 px-4 text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`group relative inline-flex items-center justify-center rounded-md border border-transparent
+                  py-2 px-4 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                  ${isSubmitting ? 'bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                >
+                  {isSubmitting ?
+                    <>
+                      <Loading />
+                      <span className="ml-2">Salvando</span>
+                    </>
+                  : 'Salvar'}
+                </button>
+              </div>
+            </Form>
+          )}
         </Formik>
       }
     </SlideOver>

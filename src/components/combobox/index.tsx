@@ -1,8 +1,7 @@
 import { Fragment } from 'react';
 import { useField } from 'formik';
 import { Listbox, Transition } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-
+import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
 interface Item {
   id: string;
@@ -26,16 +25,26 @@ interface Props {
 export default function ComboBox(props: Props) {
   
   const [field, meta, helpers] = useField(props.name);
-  const selected = props.items.find(x => x.id === field.value);
+  let selectedArray: Item[] = [];
+  let selected: Item | undefined = undefined;
 
-  function onChange(value: Item) {
-    helpers.setValue(value.id);
+  if (props.multiple) selectedArray = props.items.filter(x => field.value.includes(x.id));
+  else selected = props.items.find(x => x.id === field.value);
+
+  function onChange(value: (Item | Item[])) {
+    if (value instanceof Array) helpers.setValue(value.map(x => x.id));
+    else helpers.setValue(value.id);
+  }
+
+  function removeItem(index: number) {
+    selectedArray.splice(index, 1);
+    onChange(selectedArray);
   }
 
   return (
     <div>
       <Listbox
-        value={selected}
+        value={props.multiple ? selectedArray : selected}
         name={props.name}
         multiple={props.multiple}
         disabled={props.disabled}
@@ -58,7 +67,20 @@ export default function ComboBox(props: Props) {
                     <span className="block truncate text-gray-800">{selected.name}</span>
                   </span>
                 }
-                {!selected && <span className="block truncate">{props.placeholder || 'Selecione um item'}</span>}
+                {props.multiple &&
+                  <div className="flex items-center gap-x-2">
+                    {selectedArray.map((selected, index) => (
+                      <span key={index} className="flex items-center bg-indigo-600 text-white rounded-md overflow-hidden">
+                        { selected?.image && <img src={selected.image} alt="" className="h-6 w-6 flex-shrink-0 rounded-full mr-3" /> }
+                        <span className="block truncate py-1 px-2 text-xs">{selected.name}</span>
+                        <span className="cursor-pointer py-1 px-1 h-full hover:bg-indigo-500" onClick={() => removeItem(index)}>
+                          <XMarkIcon className="h-4 w-4" />
+                        </span>
+                      </span>
+                    ))}
+                  </div>
+                }
+                {!selected && !selectedArray.length && <span className="block truncate">{props.placeholder || 'Selecione um item'}</span>}
                 <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                   <ChevronUpDownIcon className="h-5 w-5 text-gray-400" />
                 </span>

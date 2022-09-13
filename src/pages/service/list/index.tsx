@@ -11,16 +11,16 @@ import ServiceApi from '../../../services/apis/service.service';
 
 export default function ServiceList() {
   
-  const [service, setService] = useState<Service>();
   const [loading, setLoading] = useState(true);
-  const [services, setServices] = useState<Service[]>([]);
+  const [service, setService] = useState<Service>();
   const [formIsOpen, setFormIsOpen] = useState(false);
+  const [services, setServices] = useState<Service[]>([]);
 
   useState(async () => {
     const services = await ServiceApi.getAll();
     setServices(services);
     setLoading(false);
-  })
+  });
 
   function openService(service?: Service) {
     setService(service);

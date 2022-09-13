@@ -4,18 +4,38 @@ import { FolderPlusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Project } from '../../../models/project';
 
 import ProjectForm from '../form';
+import Loading from '../../../components/loading';
 import Pagination from '../../../components/pagination';
+
+import ProjectApi from '../../../services/apis/project.service';
 
 export default function ProjectList() {
   
+  const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<Project>();
   const [formIsOpen, setFormIsOpen] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
 
-  const projects: Project[] = [];
+  useState(async () => {
+    const companies = await ProjectApi.getAll();
+    setProjects(companies);
+    setLoading(false);
+  });
 
   function openProject(project?: Project) {
     setProject(project);
     setFormIsOpen(true);
+  }
+
+  function formClose(project?: Project) {
+    setFormIsOpen(false);
+    setProject(undefined);
+
+    if (project) {
+      const index = projects.findIndex(x => x.id === project.id);
+      if (index >= 0) projects[index] = project;
+      else projects.push(project);
+    }
   }
 
   return (
@@ -68,7 +88,9 @@ export default function ProjectList() {
 
       {/* EMPTY */}
       { !projects.length &&
-        <div className="bg-white shadow rounded-lg p-8 text-center">
+        <div className="relative bg-white shadow rounded-lg p-8 text-center overflow-hidden">
+          {loading && <Loading absolute />}
+
           <FolderPlusIcon className="text-gray-400 h-12 w-12 mx-auto" />
           <div className="mt-4 mb-5">
             <h5>Nenhum projeto</h5>
@@ -85,7 +107,7 @@ export default function ProjectList() {
         </div>
       }
 
-      <ProjectForm project={project} isOpen={formIsOpen} onClose={() => setFormIsOpen(false)} />
+      <ProjectForm project={project} isOpen={formIsOpen} onClose={formClose} />
     </div>
   );
 }
