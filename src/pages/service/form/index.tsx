@@ -1,9 +1,9 @@
 import * as Yup from 'yup';
 import { Form, Formik, FormikHelpers } from 'formik';
 
-import { Skill } from '../../../models/skill';
+import { Service } from '../../../models/service';
 
-import SkillApi from '../../../services/apis/skill.service';
+import ServiceApi from '../../../services/apis/service.service';
 
 import Input from '../../../components/input';
 import Loading from '../../../components/loading';
@@ -11,30 +11,26 @@ import SlideOver from '../../../components/slide-over';
 
 interface Props {
   isOpen: boolean;
-  onClose: (skill?: Skill) => void;
+  onClose: (service?: Service) => void;
 
-  skill?: Skill;
+  service?: Service;
 }
 
-export default function SkillForm(props: Props) {
+export default function ServiceForm(props: Props) {
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('Nome é obrigatório'),
-    years: Yup.number()
-      .min(0, 'Ano deve ser maior ou igual a 0(zero)')
-      .required('Anos é obrigatório'),
-    percent: Yup.number()
-      .min(1, 'Porcentagem deve ser maior ou igual a 0(zero)')
-      .max(100, 'Porcentagem deve ser menor ou igual a 100(cem)')
-      .required('Porcentagem é obrigatório')
+    title_PT: Yup.string().required('Título em português é obrigatório'),
+    title_EN: Yup.string().required('Título em inglês é obrigatório'),
+    description_PT: Yup.string().required('Descrição em português é obrigatório'),
+    description_EN: Yup.string().required('Descrição em inglês é obrigatório')
   });
 
-  const initialValues = props.skill || new Skill();
+  const initialValues = props.service || new Service();
 
-  async function onSubmit(values: Skill, helpers: FormikHelpers<Skill>) {
-    const skill = await SkillApi.save(values);
+  async function onSubmit(values: Service, helpers: FormikHelpers<Service>) {
+    const service = await ServiceApi.save(values);
     helpers.setSubmitting(false);
-    props.onClose(skill);
+    props.onClose(service);
   }
 
   return (
@@ -43,23 +39,18 @@ export default function SkillForm(props: Props) {
         {({ isSubmitting }) => (
           <Form>
             <div className="bg-indigo-600 text-white px-6 py-7">
-              <h2 className="text-xl">{props.skill?.id ? 'Editar Habilidade' : 'Nova Habilidade'}</h2>
+              <h2 className="text-xl">{props.service?.id ? 'Editar Serviço' : 'Novo Serviço'}</h2>
               <p className="text-sm text-white/60">
-                {props.skill?.id && 'Vamos modificar as informações abaixo para editar sua habilidade.'}
-                {!props.skill?.id && 'Comece preenchendo as informações abaixo para criar sua nova habilidade.'}
+                {props.service?.id && 'Vamos modificar as informações abaixo para editar seu serviço.'}
+                {!props.service?.id && 'Comece preenchendo as informações abaixo para criar seu novo serviço.'}
               </p>
             </div>
 
             <div className="p-6 flex-1 space-y-4">
-              <Input name="name" label="Nome" placeholder="Informe o nome" />
-              <div className="flex">
-                <div className="flex-1 pr-2">
-                  <Input type="number" name="years" label="Anos" placeholder="Informe os anos" />
-                </div>
-                <div className="flex-1 pl-2">
-                  <Input type="number" name="percent" label="Porcentagem" placeholder="Informe a porcentagem"/>
-                </div>
-              </div>
+              <Input name="title_PT" label="Título (PT)" placeholder="Informe o título em português" />
+              <Input name="title_EN" label="Título (EN)" placeholder="Informe o título em inglês" />
+              <Input type="textarea" name="description_PT" label="Descrição (PT)" placeholder="Informe a descrição em português" />
+              <Input type="textarea" name="description_EN" label="Descrição (EN)" placeholder="Informe a descrição em inglês" />
             </div>
 
             <div className="border border-top p-4 space-x-2 text-right">

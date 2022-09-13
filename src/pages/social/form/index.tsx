@@ -1,40 +1,61 @@
 import * as Yup from 'yup';
 import { Form, Formik, FormikHelpers } from 'formik';
 
-import { Skill } from '../../../models/skill';
+import { Social, SocialType } from '../../../models/social';
 
-import SkillApi from '../../../services/apis/skill.service';
+import SocialApi from '../../../services/apis/social.service';
 
 import Input from '../../../components/input';
 import Loading from '../../../components/loading';
+import ComboBox from '../../../components/combobox';
 import SlideOver from '../../../components/slide-over';
 
 interface Props {
   isOpen: boolean;
-  onClose: (skill?: Skill) => void;
+  onClose: (social?: Social) => void;
 
-  skill?: Skill;
+  social?: Social;
 }
 
-export default function SkillForm(props: Props) {
+export default function SocialForm(props: Props) {
+
+  const types = [
+    {id: 'email', name: 'E-mail'},
+    {id: 'phone', name: 'Telefone'},
+    {id: 'whatsapp', name: 'WhatsApp'},
+    {id: 'linked-in', name: 'Linked-In'},
+    {id: 'github', name: 'GitHub'},
+    {id: 'facebook', name: 'Facebook'}
+  ];
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('Nome é obrigatório'),
-    years: Yup.number()
-      .min(0, 'Ano deve ser maior ou igual a 0(zero)')
+    type: Yup.string()
+      .equals(types.map(x => x.id))
       .required('Anos é obrigatório'),
-    percent: Yup.number()
-      .min(1, 'Porcentagem deve ser maior ou igual a 0(zero)')
-      .max(100, 'Porcentagem deve ser menor ou igual a 100(cem)')
-      .required('Porcentagem é obrigatório')
+    link: Yup.string()
+      .when('type', {
+        is: (type: SocialType) => type === 'phone' || type === 'whatsapp',
+        then: Yup.string()
+          .min(10, 'Telefone deve ser maior ou igual a 10(dez)')
+          .max(11, 'Telefone deve ser menor ou igual a 11(onze)')
+      })
+      .when('type', {
+        is: 'email',
+        then: Yup.string().email('E-mail precisa ser válido')
+      })
+      .when('type', {
+        is: (type: SocialType) => type === 'linked-in' || type === 'github' || type === 'facebook',
+        then: Yup.string().url('Link precisa ser uma URL válida')
+      })
+      .required('Link é obrigatório')
   });
 
-  const initialValues = props.skill || new Skill();
+  const initialValues = props.social || new Social();
 
-  async function onSubmit(values: Skill, helpers: FormikHelpers<Skill>) {
-    const skill = await SkillApi.save(values);
+  async function onSubmit(values: Social, helpers: FormikHelpers<Social>) {
+    const social = await SocialApi.save(values);
     helpers.setSubmitting(false);
-    props.onClose(skill);
+    props.onClose(social);
   }
 
   return (
@@ -43,23 +64,16 @@ export default function SkillForm(props: Props) {
         {({ isSubmitting }) => (
           <Form>
             <div className="bg-indigo-600 text-white px-6 py-7">
-              <h2 className="text-xl">{props.skill?.id ? 'Editar Habilidade' : 'Nova Habilidade'}</h2>
+              <h2 className="text-xl">{props.social?.id ? 'Editar Rede Social' : 'Nova Rede Social'}</h2>
               <p className="text-sm text-white/60">
-                {props.skill?.id && 'Vamos modificar as informações abaixo para editar sua habilidade.'}
-                {!props.skill?.id && 'Comece preenchendo as informações abaixo para criar sua nova habilidade.'}
+                {props.social?.id && 'Vamos modificar as informações abaixo para editar sua rede social.'}
+                {!props.social?.id && 'Comece preenchendo as informações abaixo para criar sua nova rede social.'}
               </p>
             </div>
 
             <div className="p-6 flex-1 space-y-4">
-              <Input name="name" label="Nome" placeholder="Informe o nome" />
-              <div className="flex">
-                <div className="flex-1 pr-2">
-                  <Input type="number" name="years" label="Anos" placeholder="Informe os anos" />
-                </div>
-                <div className="flex-1 pl-2">
-                  <Input type="number" name="percent" label="Porcentagem" placeholder="Informe a porcentagem"/>
-                </div>
-              </div>
+              <ComboBox name="type" label="Tipo" items={types} />
+              <Input name="link" label="Link" placeholder="Informe o link" />
             </div>
 
             <div className="border border-top p-4 space-x-2 text-right">

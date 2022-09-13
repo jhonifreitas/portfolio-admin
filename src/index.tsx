@@ -15,7 +15,10 @@ import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 
 import SkillList from "./pages/skill/list";
+import SocialList from "./pages/social/list";
+import ServiceList from "./pages/service/list";
 import ProjectList from "./pages/project/list";
+import CompanyList from "./pages/company/list";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -30,8 +33,17 @@ root.render(
           {/* PROJECT */}
           <Route path="projeto" element={<ProjectList />} />
 
-          {/* PROJECT */}
+          {/* COMPANY */}
+          <Route path="empresa" element={<CompanyList />} />
+
+          {/* SERVICE */}
+          <Route path="servico" element={<ServiceList />} />
+
+          {/* SKILL */}
           <Route path="habilidade" element={<SkillList />} />
+
+          {/* SOCIAL */}
+          <Route path="social" element={<SocialList />} />
         </Route>
 
         {/* AUTH */}

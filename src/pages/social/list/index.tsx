@@ -1,71 +1,76 @@
 import { useState } from 'react';
 import { FolderPlusIcon, PlusIcon } from '@heroicons/react/24/outline';
 
-import { Skill } from '../../../models/skill';
+import { Social } from '../../../models/social';
 
-import SkillForm from '../form';
+import SocialForm from '../form';
 import Loading from '../../../components/loading';
 import Pagination from '../../../components/pagination';
 
-import SkillApi from '../../../services/apis/skill.service';
+import SocialApi from '../../../services/apis/social.service';
 
-export default function SkillList() {
+export default function SocialList() {
   
-  const [skill, setSkill] = useState<Skill>();
+  const [social, setSocial] = useState<Social>();
   const [loading, setLoading] = useState(true);
-  const [skills, setSkills] = useState<Skill[]>([]);
+  const [socials, setSocials] = useState<Social[]>([]);
   const [formIsOpen, setFormIsOpen] = useState(false);
 
   useState(async () => {
-    const skills = await SkillApi.getAll();
-    setSkills(skills);
+    const socials = await SocialApi.getAll();
+    setSocials(socials);
     setLoading(false);
   })
 
-  function openSkill(skill?: Skill) {
-    setSkill(skill);
+  function openSocial(social?: Social) {
+    setSocial(social);
     setFormIsOpen(true);
   }
 
-  function formClose(skill?: Skill) {
+  function formClose(social?: Social) {
     setFormIsOpen(false);
-    setSkill(undefined);
+    setSocial(undefined);
 
-    if (skill) {
-      const index = skills.findIndex(x => x.id === skill.id);
-      if (index >= 0) skills[index] = skill;
-      else skills.push(skill);
+    if (social) {
+      const index = socials.findIndex(x => x.id === social.id);
+      if (index >= 0) socials[index] = social;
+      else socials.push(social);
     }
   }
 
   return (
-    <div className={`page-skill-list relative min-h-full ${ skills.length ? 'pb-24' : ''}`}>
-      <h2 className={`text-3xl font-medium ${ !skills.length ? 'mb-6' : '' }`}>Habilidades</h2>
+    <div className={`page-social-list relative min-h-full ${ socials.length ? 'pb-24' : ''}`}>
+      <h2 className={`text-3xl font-medium ${ !socials.length ? 'mb-6' : '' }`}>Redes Sociais</h2>
 
       {/* TABLE */}
-      { skills.length > 0 &&
+      { socials.length > 0 &&
         <>
-          <p className="mb-6 text-gray-500">Listagem de todos as habilidades já registradas.</p>
+          <p className="mb-6 text-gray-500">Listagem de todos as redes sociais já registradas.</p>
 
           <div className="bg-white border shadow rounded-lg overflow-hidden">
             <table className="border-collapse table-auto w-full text-sm">
               <thead className="bg-gray-50 text-left">
                 <tr>
-                  <th className="border-b font-medium py-4 px-7">Nome</th>
-                  <th className="border-b font-medium py-4 px-7">Anos</th>
-                  <th className="border-b font-medium py-4 px-7">Porcentagem</th>
+                  <th className="border-b font-medium py-4 px-7">Tipo</th>
+                  <th className="border-b font-medium py-4 px-7">Link</th>
                   <th className="border-b font-medium py-4 px-7 w-10"></th>
                 </tr>
               </thead>
               <tbody>
-                {skills.map((skill) => (
-                  <tr key={skill.id}>
-                    <td className="border-b py-4 px-7">{skill.name}</td>
-                    <td className="border-b py-4 px-7">{skill.years}</td>
-                    <td className="border-b py-4 px-7">{skill.percent}</td>
+                {socials.map((social) => (
+                  <tr key={social.id}>
+                    <td className="border-b py-4 px-7">
+                      {social.type === 'linked-in' && 'Linked-In'}
+                      {social.type === 'github' && 'GitHub'}
+                      {social.type === 'facebook' && 'Facebook'}
+                      {social.type === 'whatsapp' && 'WhatsApp'}
+                      {social.type === 'phone' && 'Telefone'}
+                      {social.type === 'email' && 'E-mail'}
+                    </td>
+                    <td className="border-b py-4 px-7">{social.link}</td>
                     <td
                       className="border-b py-4 px-7 cursor-pointer duration-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-500"
-                      onClick={() => openSkill(skill)}
+                      onClick={() => openSocial(social)}
                     >
                       Editar
                     </td>
@@ -74,12 +79,12 @@ export default function SkillList() {
               </tbody>
             </table>
 
-            <Pagination page={1} perPage={10} length={skills.length} />
+            <Pagination page={1} perPage={10} length={socials.length} />
           </div>
 
           <button
             type="button"
-            onClick={() => openSkill()}
+            onClick={() => openSocial()}
             className={`rounded-full border border-transparent bg-indigo-600 p-3 text-sm font-medium text-white
             absolute bottom-0 right-0 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
           >
@@ -89,27 +94,27 @@ export default function SkillList() {
       }
 
       {/* EMPTY */}
-      { !skills.length &&
+      { !socials.length &&
         <div className="relative bg-white shadow rounded-lg p-8 text-center overflow-hidden">
           {loading && <Loading absolute />}
 
           <FolderPlusIcon className="text-gray-400 h-12 w-12 mx-auto" />
           <div className="mt-4 mb-5">
-            <h5>Nenhuma habilidade</h5>
-            <p className="text-gray-400">Vamos começar criando uma nova habilidade</p>
+            <h5>Nenhuma rede social</h5>
+            <p className="text-gray-400">Vamos começar criando uma nova rede social</p>
           </div>
           <button
             type="button"
-            onClick={() => openSkill()}
+            onClick={() => openSocial()}
             className="inline-flex justify-center gap-x-2 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             <PlusIcon className="h-5 w-5" />
-            Nova Habilidade
+            Nova Rede Social
           </button>
         </div>
       }
 
-      <SkillForm skill={skill} isOpen={formIsOpen} onClose={formClose} />
+      <SocialForm social={social} isOpen={formIsOpen} onClose={formClose} />
     </div>
   );
 }

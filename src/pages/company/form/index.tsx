@@ -1,9 +1,9 @@
 import * as Yup from 'yup';
 import { Form, Formik, FormikHelpers } from 'formik';
 
-import { Skill } from '../../../models/skill';
+import { Company } from '../../../models/company';
 
-import SkillApi from '../../../services/apis/skill.service';
+import CompanyApi from '../../../services/apis/company.service';
 
 import Input from '../../../components/input';
 import Loading from '../../../components/loading';
@@ -11,30 +11,24 @@ import SlideOver from '../../../components/slide-over';
 
 interface Props {
   isOpen: boolean;
-  onClose: (skill?: Skill) => void;
+  onClose: (company?: Company) => void;
 
-  skill?: Skill;
+  company?: Company;
 }
 
-export default function SkillForm(props: Props) {
+export default function CompanyForm(props: Props) {
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('Nome é obrigatório'),
-    years: Yup.number()
-      .min(0, 'Ano deve ser maior ou igual a 0(zero)')
-      .required('Anos é obrigatório'),
-    percent: Yup.number()
-      .min(1, 'Porcentagem deve ser maior ou igual a 0(zero)')
-      .max(100, 'Porcentagem deve ser menor ou igual a 100(cem)')
-      .required('Porcentagem é obrigatório')
+    name: Yup.string().required('Anos é obrigatório'),
+    link: Yup.string().url('Link precisa ser uma URL válida').required('Link é obrigatório')
   });
 
-  const initialValues = props.skill || new Skill();
+  const initialValues = props.company || new Company();
 
-  async function onSubmit(values: Skill, helpers: FormikHelpers<Skill>) {
-    const skill = await SkillApi.save(values);
+  async function onSubmit(values: Company, helpers: FormikHelpers<Company>) {
+    const company = await CompanyApi.save(values);
     helpers.setSubmitting(false);
-    props.onClose(skill);
+    props.onClose(company);
   }
 
   return (
@@ -43,23 +37,16 @@ export default function SkillForm(props: Props) {
         {({ isSubmitting }) => (
           <Form>
             <div className="bg-indigo-600 text-white px-6 py-7">
-              <h2 className="text-xl">{props.skill?.id ? 'Editar Habilidade' : 'Nova Habilidade'}</h2>
+              <h2 className="text-xl">{props.company?.id ? 'Editar Empresa' : 'Nova Empresa'}</h2>
               <p className="text-sm text-white/60">
-                {props.skill?.id && 'Vamos modificar as informações abaixo para editar sua habilidade.'}
-                {!props.skill?.id && 'Comece preenchendo as informações abaixo para criar sua nova habilidade.'}
+                {props.company?.id && 'Vamos modificar as informações abaixo para editar sua empresa.'}
+                {!props.company?.id && 'Comece preenchendo as informações abaixo para criar sua nova empresa.'}
               </p>
             </div>
 
             <div className="p-6 flex-1 space-y-4">
               <Input name="name" label="Nome" placeholder="Informe o nome" />
-              <div className="flex">
-                <div className="flex-1 pr-2">
-                  <Input type="number" name="years" label="Anos" placeholder="Informe os anos" />
-                </div>
-                <div className="flex-1 pl-2">
-                  <Input type="number" name="percent" label="Porcentagem" placeholder="Informe a porcentagem"/>
-                </div>
-              </div>
+              <Input name="link" label="Link" placeholder="Informe o link" />
             </div>
 
             <div className="border border-top p-4 space-x-2 text-right">

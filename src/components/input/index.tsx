@@ -2,7 +2,6 @@ import { useField } from "formik";
 
 interface Props {
   id?: string;
-  value?: any;
   label?: string;
   disabled?: boolean;
   placeholder?: string;
@@ -34,7 +33,7 @@ export default function Input(props: Props) {
           type={type}
           disabled={props.disabled}
           placeholder={props.placeholder}
-          value={props.value}
+          value={field.value}
           onChange={field.onChange}
           className={`w-full appearance-none rounded-md border px-3 py-2 mb-1 sm:text-sm focus:z-10 focus:outline-none
           ${meta.error ?
@@ -51,7 +50,7 @@ export default function Input(props: Props) {
           rows={props.rows || 3}
           disabled={props.disabled}
           placeholder={props.placeholder}
-          value={props.value}
+          value={field.value}
           onChange={field.onChange}
           className={`w-full appearance-none rounded-md border px-3 py-2 sm:text-sm focus:z-10 focus:outline-none
           ${meta.error ?
@@ -68,7 +67,7 @@ export default function Input(props: Props) {
             name={props.name}
             type={type}
             disabled={props.disabled}
-            value={props.value}
+            value={field.value}
             onChange={field.onChange}
             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
           />

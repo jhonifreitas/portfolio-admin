@@ -2,7 +2,7 @@ export default function Loading(props: {absolute?: boolean}) {
   return (
     <>
       {props.absolute && 
-        <div className="absolute h-full w-full flex items-center justify-center">
+        <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center bg-white/80">
           <span className="animate-ping h-10 w-10 rounded-full bg-indigo-400 opacity-75"></span>
         </div>
       }

@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
 import { CookieService } from '../cookie.service';
 
@@ -19,6 +19,8 @@ export abstract class BaseApi {
 
     return axios.get(`${this.host}/${endpoint}`, reqOpts).then(res => {
       return this.transformTimestampToDate(res.data);
+    }).catch(err => {
+      return Promise.reject(this.checkError(err));
     });
   }
 
@@ -31,6 +33,8 @@ export abstract class BaseApi {
 
     return axios.post(`${this.host}/${endpoint}`, data, reqOpts).then(res => {
       return this.transformTimestampToDate(res.data);
+    }).catch(err => {
+      return Promise.reject(this.checkError(err));
     });
   }
 
@@ -43,6 +47,8 @@ export abstract class BaseApi {
 
     return axios.put(`${this.host}/${endpoint}`, data, reqOpts).then(res => {
       return this.transformTimestampToDate(res.data);
+    }).catch(err => {
+      return Promise.reject(this.checkError(err));
     });
   }
 
@@ -55,6 +61,8 @@ export abstract class BaseApi {
 
     return axios.patch(`${this.host}/${endpoint}`, data, reqOpts).then(res => {
       return this.transformTimestampToDate(res.data);
+    }).catch(err => {
+      return Promise.reject(this.checkError(err));
     });
   }
 
@@ -68,6 +76,8 @@ export abstract class BaseApi {
 
     return axios.delete(`${this.host}/${endpoint}`, reqOpts).then(res => {
       return this.transformTimestampToDate(res.data);
+    }).catch(err => {
+      return Promise.reject(this.checkError(err));
     });
   }
 
@@ -76,6 +86,11 @@ export abstract class BaseApi {
     const token = CookieService.getCookie('token');
     if (token) httpHeaders.authorization = `Bearer ${token}`;
     return httpHeaders;
+  }
+
+  protected checkError(error: AxiosError) {
+    if (error.response?.status === 401) window.location.href = '/entrar';
+    return error;
   }
 
   private transformTimestampToDate(obj: any): any {

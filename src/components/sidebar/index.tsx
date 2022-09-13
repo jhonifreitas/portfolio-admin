@@ -4,9 +4,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ChartBarIcon,
   BriefcaseIcon,
+  PuzzlePieceIcon,
   ChevronLeftIcon,
+  ShieldCheckIcon,
   BuildingOffice2Icon,
   ArrowLeftOnRectangleIcon,
+  ChatBubbleLeftEllipsisIcon,
 } from '@heroicons/react/24/outline';
 
 import AuthService from '../../services/auth.service';
@@ -19,10 +22,10 @@ export default function Sidebar() {
   const items = [
     { title: "Dashboard", icon: <ChartBarIcon className="h-6 w-6" />, url: "/" },
     { title: "Projetos", icon: <BriefcaseIcon className="h-6 w-6" />, url: "/projeto" },
-    { title: "Empresas", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "empresa" },
-    { title: "Serviços", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "servico" },
-    { title: "Habilidades", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "habilidade" },
-    { title: "Sociais", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "social" },
+    { title: "Empresas", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "/empresa" },
+    { title: "Serviços", icon: <PuzzlePieceIcon className="h-6 w-6" />, url: "/servico" },
+    { title: "Habilidades", icon: <ShieldCheckIcon className="h-6 w-6" />, url: "/habilidade" },
+    { title: "Sociais", icon: <ChatBubbleLeftEllipsisIcon className="h-6 w-6" />, url: "/social" },
   ];
 
   async function logout() {
@@ -65,12 +68,14 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
-      <div className={`flex px-5 py-3 gap-x-2 items-center bg-indigo-800/90 text-gray-300 ${!open && 'hidden'}`}>
-        <img src="/assets/images/avatar.png" className="rounded-full h-10 w-100" alt="" />
-        <div className="flex-1">
-          <p className="text-sm">Jonathan Freitas</p>
-          <p className="text-xs text-white/50">Adminitrador</p>
-        </div>
+      <div className={`flex px-5 py-3 items-center bg-indigo-800/90 text-gray-300 ${!open && 'hidden'}`}>
+        <Link to="/perfil" className="flex-1 flex items-center gap-x-2">
+          <img src="/assets/images/avatar.png" className="rounded-full h-10 w-100" alt="" />
+          <div className="flex-1">
+            <p className="text-sm">Jonathan Freitas</p>
+            <p className="text-xs text-white/50">Adminitrador</p>
+          </div>
+        </Link>
         <div className="cursor-pointer hover:bg-white/20 p-2 rounded-md duration-200" onClick={logout}>
           <ArrowLeftOnRectangleIcon className="h-5 w-5" />
         </div>
