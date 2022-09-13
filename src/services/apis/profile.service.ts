@@ -9,7 +9,20 @@ class ProfileService extends BaseApi {
   }
 
   async update(id: string, data: Partial<Profile>): Promise<Profile> {
-    return this.put(`profile/${id}`, data);
+    const formData = this.convertToFormData(data);
+
+    const headers = this.getHeaders;
+    headers['Content-Type'] = 'multipart/form-data';
+
+    return this.put(`profile/${id}`, formData, {headers});
+  }
+
+  private convertToFormData(data: any) {
+    const formData = new FormData();
+    for (const key in data) {
+      formData.append(key, data[key]);
+    }
+    return formData;
   }
 }
 

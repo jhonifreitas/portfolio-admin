@@ -86,12 +86,12 @@ export default function Sidebar() {
         <div className={`flex px-5 py-3 items-center bg-indigo-800/90 text-gray-300 ${!open && 'hidden'}`}>
           <Link
             to="/perfil"
-            className={`flex-1 flex items-center gap-x-2 rounded-md hover:bg-white/20
+            className={`flex-1 flex items-center p-1 gap-x-2 rounded-md hover:bg-white/20
             ${location.pathname === '/perfil' && 'bg-white/20'}`}
           >
             <img src={profile.photo || "/assets/images/avatar.png"} className="rounded-full h-10 w-100" alt="" />
-            <div className="flex-1">
-              <p className="text-sm">{profile.name}</p>
+            <div className="flex-1 overflow-hidden">
+              <p className="text-sm truncate">{profile.name}</p>
               <p className="text-xs text-white/50">Adminitrador</p>
             </div>
           </Link>

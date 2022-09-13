@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
+import AuthService from '../auth.service';
 import { CookieService } from '../cookie.service';
 
 export abstract class BaseApi {
@@ -89,7 +90,11 @@ export abstract class BaseApi {
   }
 
   protected checkError(error: AxiosError) {
-    if (error.response?.status === 401) window.location.href = '/entrar';
+    if (error.response?.status === 401) {
+      AuthService.signOut().then(_ => {
+        window.location.href = '/entrar?returnUrl='+window.location.pathname
+      });
+    }
     return error;
   }
 
