@@ -7,7 +7,9 @@ import {
   ChevronLeftIcon,
   BuildingOffice2Icon,
   ArrowLeftOnRectangleIcon,
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/outline';
+
+import AuthService from '../../services/auth.service';
 
 export default function Sidebar() {
   const location = useLocation();
@@ -18,9 +20,13 @@ export default function Sidebar() {
     { title: "Dashboard", icon: <ChartBarIcon className="h-6 w-6" />, url: "/" },
     { title: "Projetos", icon: <BriefcaseIcon className="h-6 w-6" />, url: "/projeto" },
     { title: "Empresas", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "empresa" },
+    { title: "Serviços", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "servico" },
+    { title: "Habilidades", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "habilidade" },
+    { title: "Sociais", icon: <BuildingOffice2Icon className="h-6 w-6" />, url: "social" },
   ];
 
-  function logout() {
+  async function logout() {
+    await AuthService.signOut();
     navigate('/entrar?returnUrl='+location.pathname);
   }
 
@@ -63,7 +69,7 @@ export default function Sidebar() {
         <img src="/assets/images/avatar.png" className="rounded-full h-10 w-100" alt="" />
         <div className="flex-1">
           <p className="text-sm">Jonathan Freitas</p>
-          <p className="text-xs text-gray-500">Adminitrador</p>
+          <p className="text-xs text-white/50">Adminitrador</p>
         </div>
         <div className="cursor-pointer hover:bg-white/20 p-2 rounded-md duration-200" onClick={logout}>
           <ArrowLeftOnRectangleIcon className="h-5 w-5" />

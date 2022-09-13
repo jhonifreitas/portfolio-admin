@@ -1,9 +1,11 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import * as Yup from 'yup';
 import { Form, Formik, FormikHelpers } from 'formik';
 
 import Input from '../../../components/input';
+import Loading from '../../../components/loading';
+import AuthService from '../../../services/auth.service';
 
 interface FormValue {
   email: string;
@@ -12,8 +14,8 @@ interface FormValue {
 }
 
 export default function Login() {
-  const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const validationSchema = Yup.object({
     email : Yup.string().email('E-mail precisa ser válido').required('E-mail é obrigatório'),
@@ -24,11 +26,13 @@ export default function Login() {
 
   const initialValues: FormValue = {email: '', password: '', remember: false};
 
-  function onSubmit(values: FormValue, helpers: FormikHelpers<FormValue>) {
-    console.log(values);
-
+  async function onSubmit(values: FormValue, helpers: FormikHelpers<FormValue>) {
+    await AuthService.signInEmail(values.email, values.password).then(res => {
+      navigate(searchParams.get("returnUrl") || '/');
+    }).catch(err => {
+      console.log(err);
+    });
     helpers.setSubmitting(false);
-    navigate(location.search || '/');
   }
 
   return (
@@ -52,27 +56,37 @@ export default function Login() {
             </p>
           </div>
           <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-            <Form className="mt-8 space-y-6 bg-white shadow p-10 rounded-lg">
-              <Input type="email" name="email" label="E-mail" placeholder="Informe seu e-mail" />
-              <Input type="password" name="password" label="Senha" placeholder="Informe sua senha" />
+            {({ isSubmitting }) => (
+              <Form className="mt-8 space-y-6 bg-white shadow p-10 rounded-lg">
+                <Input type="email" name="email" label="E-mail" placeholder="Informe seu e-mail" />
+                <Input type="password" name="password" label="Senha" placeholder="Informe sua senha" />
 
-              <div className="flex items-center justify-between">
-                <Input type="checkbox" name="remember" label="Lembrar-se" />
+                <div className="flex items-center justify-between">
+                  <Input type="checkbox" name="remember" label="Lembrar-se" />
 
-                <div className="text-sm">
-                  <Link to="/esqueci-senha" className="text-indigo-600 hover:text-indigo-500">
-                    Esqueceu sua senha?
-                  </Link>
+                  <div className="text-sm">
+                    <Link to="/esqueci-senha" className="text-indigo-600 hover:text-indigo-500">
+                      Esqueceu sua senha?
+                    </Link>
+                  </div>
                 </div>
-              </div>
 
-              <button
-                type="submit"
-                className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                Entrar
-              </button>
-            </Form>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`group relative flex w-full items-center justify-center rounded-md border border-transparent
+                  py-2 px-4 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                  ${isSubmitting ? 'bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                >
+                  {isSubmitting ?
+                    <>
+                      <Loading />
+                      <span className="ml-2">Entrando</span>
+                    </>
+                  : 'Entrar'}
+                </button>
+              </Form>
+            )}
           </Formik>
         </div>
       </div>

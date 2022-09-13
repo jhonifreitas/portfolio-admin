@@ -1,3 +1,4 @@
+import { initializeApp } from "firebase/app";
 import {
   getAuth, signInWithEmailAndPassword, signOut,
   GoogleAuthProvider, FacebookAuthProvider, signInWithRedirect, getRedirectResult
@@ -5,12 +6,21 @@ import {
 
 import { CookieService } from './cookie.service';
 
+const app = initializeApp({
+  apiKey: process.env.REACT_APP_FIREBASE_apiKey,
+  authDomain: process.env.REACT_APP_FIREBASE_authDomain,
+  projectId: process.env.REACT_APP_FIREBASE_projectId,
+  storageBucket: process.env.REACT_APP_FIREBASE_storageBucket,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_messagingSenderId,
+  appId: process.env.REACT_APP_FIREBASE_appId
+});
+
+const auth = getAuth(app);
+
 class AuthService {
 
-  private auth = getAuth();
-
   async signInEmail(email: string, password: string) {
-    return signInWithEmailAndPassword(this.auth, email, password).then(async credential => {
+    return signInWithEmailAndPassword(auth, email, password).then(async credential => {
       const token = await credential.user.getIdToken();
       CookieService.setCookie('token', token);
       return credential.user;
@@ -21,18 +31,18 @@ class AuthService {
     const provider = new GoogleAuthProvider();
     provider.addScope('profile');
     provider.addScope('email');
-    return signInWithRedirect(this.auth, provider);
+    return signInWithRedirect(auth, provider);
   }
 
   async signInFacebook() {
     const provider = new FacebookAuthProvider();
     provider.addScope('profile');
     provider.addScope('email');
-    return signInWithRedirect(this.auth, provider);
+    return signInWithRedirect(auth, provider);
   }
 
   async socialResult() {
-    return getRedirectResult(this.auth).then(async credential => {
+    return getRedirectResult(auth).then(async credential => {
       if (!credential) return Promise.reject();
 
       const token = await credential.user.getIdToken();
@@ -42,7 +52,7 @@ class AuthService {
   }
 
   async signOut() {
-    await signOut(this.auth);
+    await signOut(auth);
     CookieService.deleteCookie('token');
   }
 }

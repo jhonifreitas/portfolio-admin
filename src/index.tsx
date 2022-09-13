@@ -2,8 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import { initializeApp } from 'firebase/app';
-
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
@@ -16,18 +14,8 @@ import Layout from './components/layout';
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 
+import SkillList from "./pages/skill/list";
 import ProjectList from "./pages/project/list";
-
-// initializeApp({
-//   apiKey: process.env.REACT_APP_FIREBASE_apiKey,
-//   authDomain: process.env.REACT_APP_FIREBASE_authDomain,
-//   databaseURL: process.env.REACT_APP_FIREBASE_databaseURL,
-//   projectId: process.env.REACT_APP_FIREBASE_projectId,
-//   storageBucket: process.env.REACT_APP_FIREBASE_storageBucket,
-//   messagingSenderId:   process.env.REACT_APP_FIREBASE_messagingSenderId,
-//   appId: process.env.REACT_APP_FIREBASE_appId,
-//   measurementId: process.env.REACT_APP_FIREBASE_measurementId,
-// });
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -41,6 +29,9 @@ root.render(
 
           {/* PROJECT */}
           <Route path="projeto" element={<ProjectList />} />
+
+          {/* PROJECT */}
+          <Route path="habilidade" element={<SkillList />} />
         </Route>
 
         {/* AUTH */}

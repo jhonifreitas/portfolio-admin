@@ -52,7 +52,7 @@ export default function ProjectForm(props: Props) {
     await getSkills();
     await getCompanies();
     setLoading(false);
-  })
+  });
 
   async function getSkills() {
     const skills = await SkillApi.getAll();
@@ -64,15 +64,15 @@ export default function ProjectForm(props: Props) {
     setCompanies(companies);
   }
 
-  function onSubmit(values: Project, helpers: FormikHelpers<Project>) {
-    console.log(values);
+  async function onSubmit(values: Project, helpers: FormikHelpers<Project>) {
+    await ProjectApi.save(values);
     helpers.setSubmitting(false);
-    // props.onClose();
+    props.onClose();
   }
 
   return (
     <SlideOver isOpen={props.isOpen} onClose={props.onClose}>
-      {loading && <Loading />}
+      {loading && <Loading absolute />}
       {!loading &&
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
           <Form>
