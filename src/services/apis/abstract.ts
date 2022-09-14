@@ -90,11 +90,7 @@ export abstract class BaseApi {
   }
 
   protected checkError(error: AxiosError) {
-    if (error.response?.status === 401) {
-      AuthService.signOut().then(_ => {
-        window.location.href = '/entrar?returnUrl='+window.location.pathname
-      });
-    }
+    if (error.response?.status === 401) AuthService.signOut();
     return error;
   }
 

@@ -7,7 +7,7 @@ interface Props {
   placeholder?: string;
 
   name: string;
-  type?: 'text' | 'number' | 'url' | 'email' | 'password' | 'textarea' | 'radio' | 'checkbox';
+  type?: 'text' | 'date' | 'number' | 'url' | 'email' | 'password' | 'textarea' | 'radio' | 'checkbox';
 
   rows?: number;
 }
@@ -26,7 +26,7 @@ export default function Input(props: Props) {
       }
 
       {/* TEXT - DATE */}
-      { (type === 'text' || type === 'number' || type === 'url' || type === 'password' || type === 'email') &&
+      { (type === 'text' || type === 'date' || type === 'number' || type === 'url' || type === 'password' || type === 'email') &&
         <input
           id={props.id || props.name}
           name={props.name}

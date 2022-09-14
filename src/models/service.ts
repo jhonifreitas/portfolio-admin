@@ -4,7 +4,7 @@ export class Service extends BaseModel {
   title_PT!: string;
   title_EN!: string;
 
-  icon!: string;
+  icon?: string | null;
 
   description_PT!: string;
   description_EN!: string;

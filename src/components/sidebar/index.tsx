@@ -15,7 +15,7 @@ import {
 import { Profile } from '../../models/profile';
 
 import AuthService from '../../services/auth.service';
-import ProfileApi from '../../services/apis/profile.service';
+import { CookieService } from '../../services/cookie.service';
 
 export default function Sidebar() {
   
@@ -33,12 +33,9 @@ export default function Sidebar() {
     { title: "Sociais", icon: <ChatBubbleLeftEllipsisIcon className="h-6 w-6" />, url: "/social" },
   ];
 
-  useState(async () => {
-    const profileId = process.env.REACT_APP_PROFILE_ID;
-    if (profileId) {
-      const profile = await ProfileApi.getById(profileId);
-      setProfile(profile);
-    }
+  useState(() => {
+    const profile = CookieService.getCookie('profile');
+    if (profile) setProfile(JSON.parse(profile));
   });
 
   async function logout() {
@@ -83,7 +80,7 @@ export default function Sidebar() {
       </ul>
 
       {profile &&
-        <div className={`flex px-5 py-3 items-center bg-indigo-800/90 text-gray-300 ${!open && 'hidden'}`}>
+        <div className={`flex px-5 py-3 gap-x-2 items-center bg-indigo-800/90 text-gray-300 ${!open && 'hidden'}`}>
           <Link
             to="/perfil"
             className={`flex-1 flex items-center p-1 gap-x-2 rounded-md hover:bg-white/20

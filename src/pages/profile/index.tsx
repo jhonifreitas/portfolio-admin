@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CheckIcon } from '@heroicons/react/24/outline';
 
 import * as Yup from 'yup';
 import { Form, Formik, FormikHelpers } from 'formik';
@@ -13,6 +12,7 @@ import UploadImage from '../../components/upload-image';
 import UploadAvatar from '../../components/upload-avatar';
 
 import ProfileApi from '../../services/apis/profile.service';
+import { CookieService } from '../../services/cookie.service';
 
 export default function ProfileForm() {
   
@@ -23,10 +23,10 @@ export default function ProfileForm() {
   const [profile, setProfile] = useState<Profile>(new Profile());
 
   useState(async () => {
-    const profileId = process.env.REACT_APP_PROFILE_ID;
-    if (profileId) {
-      const profile = await ProfileApi.getById(profileId);
-      
+    const profileStr = CookieService.getCookie('profile');
+    if (profileStr) {
+      const profile: Profile = JSON.parse(profileStr);
+
       // PROFESSION INI
       const date = new Date(profile.profession_init);
       
@@ -37,6 +37,10 @@ export default function ProfileForm() {
       const day = dayInt < 10 ? `0${dayInt}` : dayInt;
       
       profile.profession_init = `${date.getFullYear()}-${month}-${day}`;
+
+      if (profile.photo) setPhoto(new FileUpload(profile.photo));
+      if (profile.CV_PT) setCVPT(new FileUpload(profile.CV_PT));
+      if (profile.CV_EN) setCVEN(new FileUpload(profile.CV_EN));
       
       setProfile(profile);
     }
@@ -63,10 +67,31 @@ export default function ProfileForm() {
   }
 
   async function onSubmit(values: Profile, helpers: FormikHelpers<Profile>) {
-    if (photo) values.photo = photo.file as any;
-    if (cvPT) values.CV_PT = cvPT.file as any;
-    if (cvEN) values.CV_EN = cvEN.file as any;
-    await ProfileApi.update(profile.id, values);
+    if (photo?.file) {
+      values.photo = await ProfileApi.uploadFile(profile.id, photo.file, `photo.${photo.extension}`);
+    } else if (profile.photo && !photo) {
+      await ProfileApi.deleteFile(profile.photo);
+      values.photo = null;
+    }
+
+    if (cvPT?.file) {
+      values.CV_PT = await ProfileApi.uploadFile(profile.id, cvPT.file, `cv_pt.${cvPT.extension}`);
+    } else if (profile.CV_PT && !cvPT) {
+      await ProfileApi.deleteFile(profile.CV_PT);
+      values.CV_PT = null;
+    }
+
+    if (cvEN?.file) {
+      values.CV_EN = await ProfileApi.uploadFile(profile.id, cvEN.file, `cv_en.${cvEN.extension}`);
+    } else if (profile.CV_EN && !cvEN) {
+      await ProfileApi.deleteFile(profile.CV_EN);
+      values.CV_EN = null;
+    }
+
+    values.profession_init = new Date(values.profession_init);
+
+    const data = await ProfileApi.update(profile.id, values);
+    CookieService.setCookie('profile', JSON.stringify(data));
     helpers.setSubmitting(false);
   }
 
@@ -87,7 +112,7 @@ export default function ProfileForm() {
                     <div className="flex-1">
                       <UploadAvatar
                         label="Foto"
-                        path={profile.photo}
+                        path={photo?.path}
                         onChange={setPhoto}
                       />
                     </div>
@@ -114,7 +139,7 @@ export default function ProfileForm() {
                       <Input name="name" label="Nome" placeholder="Informe o nome" />
                     </div>
                     <div className="flex-1 pl-2">
-                      <Input name="profession_init" label="Início da Profissão" placeholder="Informe o início da profissão" />
+                      <Input type="date" name="profession_init" label="Início da Profissão" placeholder="Informe o início da profissão" />
                     </div>
                   </div>
 
@@ -150,14 +175,14 @@ export default function ProfileForm() {
                     <div className="flex-1 pr-2">
                       <UploadImage
                         label="Currículo (PT)"
-                        path={profile.CV_PT}
+                        path={cvPT?.path}
                         onChange={onChangeCVPT}
                       />
                     </div>
                     <div className="flex-1 pl-2">
                       <UploadImage
                         label="Currículo (EN)"
-                        path={profile.CV_EN}
+                        path={cvEN?.path}
                         onChange={onChangeCVEN}
                       />
                     </div>

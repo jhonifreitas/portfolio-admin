@@ -1,13 +1,17 @@
+import { useState } from 'react';
+
 import * as Yup from 'yup';
 import { Form, Formik, FormikHelpers } from 'formik';
 
 import { Service } from '../../../models/service';
-
-import ServiceApi from '../../../services/apis/service.service';
+import { FileUpload } from '../../../models/file-upload';
 
 import Input from '../../../components/input';
 import Loading from '../../../components/loading';
 import SlideOver from '../../../components/slide-over';
+import UploadImage from '../../../components/upload-image';
+
+import ServiceApi from '../../../services/apis/service.service';
 
 interface Props {
   isOpen: boolean;
@@ -18,6 +22,8 @@ interface Props {
 
 export default function ServiceForm(props: Props) {
 
+  const [icon, setIcon] = useState<FileUpload>();
+
   const validationSchema = Yup.object({
     title_PT: Yup.string().required('Título em português é obrigatório'),
     title_EN: Yup.string().required('Título em inglês é obrigatório'),
@@ -27,8 +33,20 @@ export default function ServiceForm(props: Props) {
 
   const initialValues = props.service || new Service();
 
+  function onChangeIcon(files?: FileUpload | FileUpload[]) {
+    if (files instanceof Array) setIcon(files[0]);
+    else setIcon(files);
+  }
+
   async function onSubmit(values: Service, helpers: FormikHelpers<Service>) {
     const service = await ServiceApi.save(values);
+
+    if (icon?.file) {
+      await ServiceApi.uploadIcon(service.id, icon.file);
+    } else if (service.icon && !icon) {
+      await ServiceApi.deleteIcon(service.id);
+    }
+
     helpers.setSubmitting(false);
     props.onClose(service);
   }
@@ -51,6 +69,12 @@ export default function ServiceForm(props: Props) {
               <Input name="title_EN" label="Título (EN)" placeholder="Informe o título em inglês" />
               <Input type="textarea" name="description_PT" label="Descrição (PT)" placeholder="Informe a descrição em português" />
               <Input type="textarea" name="description_EN" label="Descrição (EN)" placeholder="Informe a descrição em inglês" />
+
+              <UploadImage
+                label="Ícone"
+                path={icon?.path}
+                onChange={onChangeIcon}
+              />
             </div>
 
             <div className="border border-top p-4 space-x-2 text-right">

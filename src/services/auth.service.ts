@@ -1,28 +1,17 @@
-import { initializeApp } from "firebase/app";
 import {
-  getAuth, signInWithEmailAndPassword, signOut,
-  GoogleAuthProvider, FacebookAuthProvider, signInWithRedirect, getRedirectResult
+  GoogleAuthProvider, FacebookAuthProvider, UserCredential,
+  signInWithEmailAndPassword, signOut, signInWithRedirect, getRedirectResult
 } from 'firebase/auth';
 
+import { fbAuth } from "../firebase.config";
+import ProfileApi from './apis/profile.service';
 import { CookieService } from './cookie.service';
-
-const app = initializeApp({
-  apiKey: process.env.REACT_APP_FIREBASE_apiKey,
-  authDomain: process.env.REACT_APP_FIREBASE_authDomain,
-  projectId: process.env.REACT_APP_FIREBASE_projectId,
-  storageBucket: process.env.REACT_APP_FIREBASE_storageBucket,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_messagingSenderId,
-  appId: process.env.REACT_APP_FIREBASE_appId
-});
-
-const auth = getAuth(app);
 
 class AuthService {
 
   async signInEmail(email: string, password: string) {
-    return signInWithEmailAndPassword(auth, email, password).then(async credential => {
-      const token = await credential.user.getIdToken();
-      CookieService.setCookie('token', token);
+    return signInWithEmailAndPassword(fbAuth, email, password).then(async credential => {
+      await this.setProfile(credential);
       return credential.user;
     });
   }
@@ -31,29 +20,46 @@ class AuthService {
     const provider = new GoogleAuthProvider();
     provider.addScope('profile');
     provider.addScope('email');
-    return signInWithRedirect(auth, provider);
+    return signInWithRedirect(fbAuth, provider);
   }
 
   async signInFacebook() {
     const provider = new FacebookAuthProvider();
     provider.addScope('profile');
     provider.addScope('email');
-    return signInWithRedirect(auth, provider);
+    return signInWithRedirect(fbAuth, provider);
   }
 
   async socialResult() {
-    return getRedirectResult(auth).then(async credential => {
+    return getRedirectResult(fbAuth).then(async credential => {
       if (!credential) return Promise.reject();
 
-      const token = await credential.user.getIdToken();
-      CookieService.setCookie('token', token);
+      await this.setProfile(credential);
       return credential.user;
     });
   }
 
   async signOut() {
-    await signOut(auth);
+    await signOut(fbAuth);
     CookieService.deleteCookie('token');
+    CookieService.deleteCookie('profile');
+    window.location.href = '/entrar?returnUrl='+window.location.pathname;
+  }
+
+  private async setProfile(credential: UserCredential) {
+    const token = await credential.user.getIdToken();
+    CookieService.setCookie('token', token);
+    
+    const profile = await ProfileApi.getById(credential.user.uid).catch(_ => {});
+
+    if (profile) {
+      CookieService.setCookie('profile', JSON.stringify(profile));
+    } else {
+      await signOut(fbAuth);
+      CookieService.deleteCookie('token');
+      CookieService.deleteCookie('profile');
+      return Promise.reject({message: 'Perfil não encontrado!'});
+    }
   }
 }
 

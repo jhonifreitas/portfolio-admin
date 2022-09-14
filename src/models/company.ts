@@ -2,10 +2,11 @@ import { BaseModel } from './base';
 
 export class Company extends BaseModel {
   name!: string;
-  init!: Date;
-  description!: string;
+  init!: Date | string;
+  description_PT!: string;
+  description_EN!: string;
 
-  end?: Date;
+  end?: Date | string;
   link?: string;
-  logo?: string;
+  logo?: string | null;
 }

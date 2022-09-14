@@ -13,7 +13,7 @@ export default function UploadAvatar(props: Props) {
 
   const [image, setImage] = useState<FileUpload>();
 
-  if (props.path) setImage(new FileUpload(props.path));
+  if (props.path && !image) setImage(new FileUpload(props.path));
 
   function onUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.item(0);
@@ -34,7 +34,7 @@ export default function UploadAvatar(props: Props) {
 
   function onRemove() {
     setImage(undefined);
-    props.onChange(image);
+    props.onChange(undefined);
   }
 
   return (

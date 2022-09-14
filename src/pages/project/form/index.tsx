@@ -15,6 +15,8 @@ import Input from '../../../components/input';
 import Loading from '../../../components/loading';
 import ComboBox from '../../../components/combobox';
 import SlideOver from '../../../components/slide-over';
+import UploadImage from '../../../components/upload-image';
+import { FileUpload } from '../../../models/file-upload';
 
 interface Props {
   isOpen: boolean;
@@ -27,6 +29,7 @@ export default function ProjectForm(props: Props) {
 
   const [loading, setLoading] = useState(true);
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [images, setImages] = useState<FileUpload[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
 
   const types = [
@@ -65,8 +68,23 @@ export default function ProjectForm(props: Props) {
     setCompanies(companies);
   }
 
+  function onChangeImages(files?: FileUpload | FileUpload[]) {
+    if (files instanceof Array) setImages(files);
+  }
+
   async function onSubmit(values: Project, helpers: FormikHelpers<Project>) {
     const project = await ProjectApi.save(values);
+
+    const newImages = images.filter(x => x.isNew);
+    for (const image of newImages) {
+      if (image.file) {
+        const fileName = `${Date.now()}.${image.extension}`;
+        const url = await ProjectApi.uploadFile(project.id, image.file, fileName);
+        values.images.push(url);
+      }
+    }
+    await ProjectApi.update(project.id, {images: values.images});
+
     helpers.setSubmitting(false);
     props.onClose(project);
   }
@@ -104,6 +122,13 @@ export default function ProjectForm(props: Props) {
                   label="Descrição (EN)"
                   placeholder="Informe a descrição em inglês"
                 />
+
+                <UploadImage
+                  label="Imagens"
+                  multiple
+                  onChange={onChangeImages}
+                  paths={images.map(x => x.path)}
+                />
               </div>
 
               <div className="border border-top p-4 space-x-2 text-right">
@@ -118,7 +143,7 @@ export default function ProjectForm(props: Props) {
                   ${isSubmitting ? 'bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}
                 >
                   {isSubmitting ?
-                    <>
+                    <>  
                       <Loading />
                       <span className="ml-2">Salvando</span>
                     </>

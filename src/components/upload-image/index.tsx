@@ -18,25 +18,29 @@ export default function UploadImage(props: Props) {
   const [files, setFiles] = useState<FileUpload[]>([]);
   const accept = props.accept || 'image/*,application/pdf';
 
-  if (props.path) setFiles([new FileUpload(props.path)]);
+  if (props.path && !files.length) setFiles([new FileUpload(props.path)]);
 
   function onUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.item(0);
-    if (file) {
-      const reader = new FileReader();
+    if (event.target.files) {
+      for (let index = 0; index < event.target.files.length; index++) {
+        const file = event.target.files.item(index);
+        if (file) {
+          const reader = new FileReader();
 
-      reader.addEventListener("load", (event) => {
-        const base64 = event.target?.result as string;
-        const image = new FileUpload(base64, file);
-        files.push(image);
-        setFiles(files);
+          reader.addEventListener("load", (event) => {
+            const base64 = event.target?.result as string;
+            const image = new FileUpload(base64, file);
+            files.push(image);
+            setFiles(files);
 
-        if (props.multiple) props.onChange(files);
-        else props.onChange(image);
-      });
-      reader.readAsDataURL(file);
+            if (props.multiple) props.onChange(files);
+            else props.onChange(image);
+          });
+          reader.readAsDataURL(file);
 
-      event.target.value = '';
+          event.target.value = '';
+        }
+      }
     }
   }
 
@@ -51,7 +55,7 @@ export default function UploadImage(props: Props) {
       <label className="block text-sm font-medium text-gray-700 mb-1">{props.label}</label>
 
       {/* UPLOAD */}
-      {!props.multiple && files.length === 0 &&
+      {(props.multiple || (!props.multiple && files.length === 0)) &&
         <label
           htmlFor="file-upload"
           className={`mt-1 flex flex-auto justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6

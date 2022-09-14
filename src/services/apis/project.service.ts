@@ -1,6 +1,10 @@
+import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 import { BaseApi } from './abstract';
 
 import { Project } from '../../models/project';
+
+import { fbStorage } from "../../firebase.config";
 
 class ProjectService extends BaseApi {
 
@@ -33,6 +37,21 @@ class ProjectService extends BaseApi {
 
   async delete(id: string): Promise<void> {
     return this.delete(`project/${id}`);
+  }
+
+  // UPLOAD
+  async uploadFile(id: string, file: Blob | File, fileName: string): Promise<string> {
+    const storage = ref(fbStorage, `/projects/${id}/${fileName}`);
+
+    return uploadBytes(storage, file).then(async _ => {
+      const url = await getDownloadURL(storage);
+      return url;
+    });
+  }
+
+  deleteFile(url: string) {
+    const storage = ref(fbStorage, url);
+    return deleteObject(storage);
   }
 }
 
