@@ -1,7 +1,12 @@
 {
   "name": "portfolio-admin",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Painel administrador",
   "private": true,
+  "license": "MIT",
+  "homepage": "https://jhonifreitas.github.io/portfolio-admin/",
+  "repository": "git@github.com:jhonifreitas/portfolio-admin.git",
+  "author": "Jonathan Freitas <freitas.jonathan08@gmail.com>",
   "dependencies": {
     "@headlessui/react": "^1.7.0",
     "@heroicons/react": "^2.0.10",
