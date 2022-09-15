@@ -26,7 +26,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.NODE_ENV === 'production' ? '/portfolio-admin' : '/'}>
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* HOME */}

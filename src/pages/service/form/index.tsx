@@ -22,6 +22,7 @@ interface Props {
 
 export default function ServiceForm(props: Props) {
 
+  const [loading, setLoading] = useState(true);
   const [icon, setIcon] = useState<FileUpload>();
 
   const validationSchema = Yup.object({
@@ -32,6 +33,16 @@ export default function ServiceForm(props: Props) {
   });
 
   const initialValues = props.service || new Service();
+
+  useState(() => {
+    // IMAGE
+    if (initialValues.icon) {
+      const icon = new FileUpload(initialValues.icon);
+      setIcon(icon);
+    }
+
+    setLoading(false);
+  });
 
   function onChangeIcon(files?: FileUpload | FileUpload[]) {
     if (files instanceof Array) setIcon(files[0]);
@@ -53,52 +64,55 @@ export default function ServiceForm(props: Props) {
 
   return (
     <SlideOver isOpen={props.isOpen} onClose={props.onClose}>
-      <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-        {({ isSubmitting }) => (
-          <Form>
-            <div className="bg-indigo-600 text-white px-6 py-7">
-              <h2 className="text-xl">{props.service?.id ? 'Editar Serviço' : 'Novo Serviço'}</h2>
-              <p className="text-sm text-white/60">
-                {props.service?.id && 'Vamos modificar as informações abaixo para editar seu serviço.'}
-                {!props.service?.id && 'Comece preenchendo as informações abaixo para criar seu novo serviço.'}
-              </p>
-            </div>
+      {loading && <Loading absolute />}
+      {!loading &&
+        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+          {({ isSubmitting }) => (
+            <Form>
+              <div className="bg-indigo-600 text-white px-6 py-7">
+                <h2 className="text-xl">{props.service?.id ? 'Editar Serviço' : 'Novo Serviço'}</h2>
+                <p className="text-sm text-white/60">
+                  {props.service?.id && 'Vamos modificar as informações abaixo para editar seu serviço.'}
+                  {!props.service?.id && 'Comece preenchendo as informações abaixo para criar seu novo serviço.'}
+                </p>
+              </div>
 
-            <div className="p-6 flex-1 space-y-4">
-              <Input name="title_PT" label="Título (PT)" placeholder="Informe o título em português" />
-              <Input name="title_EN" label="Título (EN)" placeholder="Informe o título em inglês" />
-              <Input type="textarea" name="description_PT" label="Descrição (PT)" placeholder="Informe a descrição em português" />
-              <Input type="textarea" name="description_EN" label="Descrição (EN)" placeholder="Informe a descrição em inglês" />
+              <div className="p-6 flex-1 space-y-4">
+                <Input name="title_PT" label="Título (PT)" placeholder="Informe o título em português" />
+                <Input name="title_EN" label="Título (EN)" placeholder="Informe o título em inglês" />
+                <Input type="textarea" name="description_PT" label="Descrição (PT)" placeholder="Informe a descrição em português" />
+                <Input type="textarea" name="description_EN" label="Descrição (EN)" placeholder="Informe a descrição em inglês" />
 
-              <UploadImage
-                label="Ícone"
-                path={icon?.path}
-                onChange={onChangeIcon}
-              />
-            </div>
+                <UploadImage
+                  label="Ícone"
+                  path={icon?.path}
+                  onChange={onChangeIcon}
+                />
+              </div>
 
-            <div className="border border-top p-4 space-x-2 text-right">
-              <button type="button" onClick={() => props.onClose()} className="rounded-md border py-2 px-4 text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`group relative inline-flex items-center justify-center rounded-md border border-transparent
-                py-2 px-4 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                ${isSubmitting ? 'bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}
-              >
-                {isSubmitting ?
-                  <>
-                    <Loading />
-                    <span className="ml-2">Salvando</span>
-                  </>
-                : 'Salvar'}
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
+              <div className="border border-top p-4 space-x-2 text-right">
+                <button type="button" onClick={() => props.onClose()} className="rounded-md border py-2 px-4 text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`group relative inline-flex items-center justify-center rounded-md border border-transparent
+                  py-2 px-4 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                  ${isSubmitting ? 'bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                >
+                  {isSubmitting ?
+                    <>
+                      <Loading />
+                      <span className="ml-2">Salvando</span>
+                    </>
+                  : 'Salvar'}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      }
     </SlideOver>
   );
 }

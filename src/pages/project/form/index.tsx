@@ -40,8 +40,8 @@ export default function ProjectForm(props: Props) {
   ];
 
   const validationSchema = Yup.object({
+    companyId: Yup.string(),
     name: Yup.string().required('Nome é obrigatório'),
-    companyId: Yup.string().required('Empresa é obrigatório'),
     skillIds: Yup.array().of(Yup.string()).min(1, 'Selecione ao menos uma habilidade'),
     type: Yup.string().equals(types.map(x => x.id)).required('Tipo é obrigatório'),
     description_PT: Yup.string().required('Descrição em português é obrigatório'),

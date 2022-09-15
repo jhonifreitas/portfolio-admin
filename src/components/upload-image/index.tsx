@@ -19,6 +19,13 @@ export default function UploadImage(props: Props) {
   const accept = props.accept || 'image/*,application/pdf';
 
   if (props.path && !files.length) setFiles([new FileUpload(props.path)]);
+  // else if (props.paths && !files.length) {
+  //   for (const path of props.paths) {
+  //     const file = new FileUpload(path);
+  //     files.push(file);
+  //   }
+  //   setFiles(files);
+  // }
 
   function onUpload(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.files) {
@@ -37,10 +44,10 @@ export default function UploadImage(props: Props) {
             else props.onChange(image);
           });
           reader.readAsDataURL(file);
-
-          event.target.value = '';
         }
       }
+
+      event.target.value = '';
     }
   }
 
@@ -106,7 +113,7 @@ export default function UploadImage(props: Props) {
 
               <div className="flex h-full items-center p-3 bg-gray-100">
                 {file.isImage &&
-                  <div className="rounded-md h-16 w-16 overflow-hidden bg-gray-200">
+                  <div className="rounded-md h-16 w-16 overflow-hidden bg-gray-200 flex items-center">
                     <img src={file.path} alt="" />
                   </div>
                 }

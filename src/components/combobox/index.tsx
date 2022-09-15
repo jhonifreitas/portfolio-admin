@@ -68,7 +68,7 @@ export default function ComboBox(props: Props) {
                   </span>
                 }
                 {props.multiple &&
-                  <div className="flex items-center gap-x-2">
+                  <div className="flex items-center gap-x-2 gap-y-1 flex-wrap">
                     {selectedArray.map((selected, index) => (
                       <span key={index} className="flex items-center bg-indigo-600 text-white rounded-md overflow-hidden">
                         { selected?.image && <img src={selected.image} alt="" className="h-6 w-6 flex-shrink-0 rounded-full mr-3" /> }
